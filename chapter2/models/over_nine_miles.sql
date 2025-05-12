@@ -1,7 +1,9 @@
 -- over_nine_miles: All columns with taxi trip with distance over 9 miles
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table'
+) }}
 
-select *
-from {{ ref('taxi_trips') }}
-where distance > 9
+SELECT *
+FROM {{ ref('taxi_trips') }}
+WHERE distance > 9

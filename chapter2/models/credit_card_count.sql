@@ -1,7 +1,11 @@
 -- credit_card_count: Breakdown of the count of fares paid by credit card.
 
-{{ config(materialized='table') }}
+{{ config(
+    materialized='table'
+) }}
 
-select payment, count(payment) as count
-from {{ ref('taxi_trips') }}
-where payment = "credit card"
+SELECT payment,
+    COUNT(fare) AS count
+FROM {{ ref('taxi_trips') }}
+WHERE payment = 'credit card'
+GROUP BY payment
