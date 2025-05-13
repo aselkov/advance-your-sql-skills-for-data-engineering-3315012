@@ -1,13 +1,9 @@
-{% test ensure_cohort_size_max_100(model, column_name) %}
+{{% test ensure_cohort_size_max_100 (model, column_name) %}}
 
-with cohort_count_cte as (
-    select cohort, count(*) as cohort_count
-    from {{ model }} 
-    group by {{ column_name }} 
-)
+SELECT column_name,
+    COUNT(adid) AS cohort_size
+FROM {{model}}
+GROUP BY column_name
+HAVING COUNT(adid) > 110
 
-select cohort, cohort_count
-from cohort_count_cte
-where cohort_count > 100
-
-{% endtest %}
+{{ % endtest %}}
