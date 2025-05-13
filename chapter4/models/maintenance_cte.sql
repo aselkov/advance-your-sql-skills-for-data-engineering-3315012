@@ -3,22 +3,19 @@
 {{ config(materialized='view') }}
 
 -- Create a CTE to filter excavator_ids based on conditions
-with failing_excavators as ( 
-        select excavator_id
-        from {{ ref('excavators') }}
-        where oil_level != 'P'
-            or air_filter != 'P'
-            or coolant_level != 'P'
-            or hydraulic_valves != 'P'
+WITH failing_excavators AS (
+    SELECT excavator_id
+        FROM {{ ref('excavators') }}
+        WHERE oil_level != 'P'
+            OR air_filter != 'P'
+            OR coolant_level != 'P'
+            OR hydraulic_valves != 'P'
 )
 
 -- Use the CTE in the main query
-select job_id, excavator_id
-from {{ ref('jobs') }}
-where excavator_id in  (
-    select excavator_id 
-    from failing_excavators
-) 
-and job_id in (398, 417, 401, 332, 329, 340, 366, 373, 376, 423)
-
-
+SELECT DISTINCT
+    j.job_id,
+    j.excavator_id
+FROM {{ ref('jobs') }} j
+    INNER JOIN failing_excavators fx ON fx.excavator_id = j.excavator_id
+WHERE j.job_id in (398, 417, 401, 332, 329, 340, 366, 373, 376, 423)
